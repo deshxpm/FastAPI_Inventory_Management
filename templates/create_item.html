@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Item</title>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Create Item</h1>
+        <form id="create-item-form">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Item</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('create-item-form').addEventListener('submit', function (e) {
+            e.preventDefault();  // Prevent the default form submission
+
+            const token = localStorage.getItem('token');  // Retrieve token from localStorage
+
+            // Prepare form data
+            const formData = {
+                name: document.getElementById('name').value,
+                description: document.getElementById('description').value,
+                price: document.getElementById('price').value
+            };
+
+            // Make fetch request to create item with authorization header
+            fetch('/items/create', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)  // Send form data as JSON
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Handle successful creation
+                    alert("Item created successfully!");
+                    window.location.href = '/items';  // Redirect to items list
+                } else {
+                    // Handle errors, such as unauthorized access
+                    alert("Failed to create item. Please check your inputs or authentication.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            });
+        });
+    </script>
+</body>
+</html>
